@@ -9,7 +9,7 @@ struct contact{
 	int num;
 }contact_list;
 
-char name[50];
+char name[50], name_query[50];
 
 
 int menu();
@@ -17,6 +17,7 @@ void heading();
 void addContact();
 void displayContact();
 void editContact();
+void searchContact();
 
 int main(){
 
@@ -73,6 +74,7 @@ int menu(){
 
 			case 4:
 				printf("Search Contact\n");
+				searchContact();
 				break;
 
 			case 5: 
@@ -142,7 +144,7 @@ void displayContact(){
 	//printf("No.\t Name\t Address\t\t Email\t\t Phone\n");
 	while(fread(&contact_list, sizeof(contact_list), 1, fpR) == 1){
 
-		printf("%d\t %s\t %s\t\t %s\t\t %lf\n",contact_list.num,contact_list.name, contact_list.address, contact_list.email, contact_list.phone);
+		printf("%d\t %s\t %s\t\t %s\t\t %0.0lf\n",contact_list.num,contact_list.name, contact_list.address, contact_list.email, contact_list.phone);
 	}
 
 	fclose(fpR);
@@ -182,6 +184,36 @@ void editContact(){
 	rename("temp.bin","contact.bin");
 
 	printf("EDIT SUCCESSFUL\n");
+}
+
+void searchContact(){
+	int found = 0,name_length;
+	printf("Enter the name to be searched : \n");
+	scanf("%s", name_query);
+
+	FILE *fpS;
+	fpS = fopen("contact.bin","rb");
+
+	name_length = strlen(name_query);
+	while(fread(&contact_list, sizeof(contact_list),1,fpS)==1){
+
+		for(int i = 0; i < name_length; i++){
+			name[i] = contact_list.name[i];
+			name[name_length] = '\0';
+		}
+			if(strcmp(name,name_query)==0){
+				printf("No: %d\n Name: %s\n Address:%s\n Email:%s\n Phone:%0.0lf\n ",contact_list.num, contact_list.name, contact_list.address, contact_list.email, contact_list.phone);
+				found++;
+			}
+		
+	}
+
+	if(found == 0){
+		printf("No matches found\n");
+	}
+
+	fclose(fpS);
+	
 }
 
 
