@@ -18,6 +18,7 @@ void addContact();
 void displayContact();
 void editContact();
 void searchContact();
+void deleteContact();
 
 int main(){
 
@@ -79,6 +80,7 @@ int menu(){
 
 			case 5: 
 				printf("Delete Contact\n");
+				deleteContact();
 				break;
 
 			case 6:
@@ -216,6 +218,42 @@ void searchContact(){
 	
 }
 
+
+void deleteContact(){
+	int num, flag = 0;
+
+	FILE *fpR, *fpW;
+
+	heading();
+
+	fpR = fopen("contact.bin","rb");
+	if(fpR ==  NULL){
+		printf("Unable to get the record\n");
+	}
+
+	fpW = fopen("temp.bin","wb");
+	printf("Enter the contact number to be deleted:\n");
+	scanf("%d",&num);
+
+	while(fread(&contact_list, sizeof(contact_list), 1, fpR)){
+		if(num != contact_list.num){
+			fwrite(&contact_list, sizeof(contact_list), 1, fpW);
+		}
+		else{
+			printf("Contact Deleted\n");
+			flag = 1;
+		}
+	}
+	if(flag == 0){
+		printf("No such contact exist\n");
+	}
+
+	fclose(fpR);
+	fclose(fpW);
+	remove("contact.bin");
+	rename("temp.bin","contact.bin");
+
+}
 
 
 
